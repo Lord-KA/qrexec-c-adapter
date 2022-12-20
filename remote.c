@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -53,7 +57,7 @@ int handle_remote_data(
             return REMOTE_EOF;
     }
 
-    buf = malloc(max_len);
+    buf = (char*)malloc(max_len);
     if (!buf) {
         PERROR("malloc");
         return REMOTE_ERROR;
@@ -157,7 +161,7 @@ int handle_input(
     struct msg_header hdr;
     int rc = REMOTE_ERROR;
 
-    buf = malloc(max_len);
+    buf = (char*)malloc(max_len);
     if (!buf) {
         PERROR("malloc");
         return REMOTE_ERROR;
@@ -216,3 +220,7 @@ int send_exit_code(libvchan_t *vchan, int status)
     }
     return 0;
 }
+
+#ifdef __cplusplus
+}
+#endif

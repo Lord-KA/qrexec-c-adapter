@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void do_replace_chars(char *buf, int len) {
     int i;
     unsigned char c;
@@ -34,3 +38,7 @@ void do_replace_chars(char *buf, int len) {
             buf[i] = '_';
     }
 }
+
+#ifdef __cplusplus
+}
+#endif

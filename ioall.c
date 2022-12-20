@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <unistd.h>
 #include <stdio.h>
@@ -111,3 +114,7 @@ int copy_fd_all(int fdout, int fdin)
     }
     return 1;
 }
+
+#ifdef __cplusplus
+}
+#endif

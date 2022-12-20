@@ -22,6 +22,11 @@
 #ifndef QREXEC_AGENT_H
 #define QREXEC_AGENT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -29,7 +34,7 @@
 
 int handle_handshake(libvchan_t *ctrl);
 void handle_vchan_error(const char *op);
-_Noreturn void do_exec(const char *cmd, const char *user);
+void do_exec(const char *cmd, const char *user);
 /* call before fork() for service handling process (either end) */
 void prepare_child_env(void);
 
@@ -56,5 +61,9 @@ struct qrexec_cmd_info {
 	int cmdline_len;
 	char cmdline[];
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // defined QREXEC_AGENT_H

@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _LIBQREXEC_UTILS_H
 #define _LIBQREXEC_UTILS_H
@@ -27,7 +30,7 @@
 #define _GNU_SOURCE 1
 #include <signal.h>
 #include <stdbool.h>
-#include <libvchan.h>
+#include <vchan-xen/libvchan.h>
 #include <errno.h>
 #include <sys/select.h>
 
@@ -274,5 +277,9 @@ void qrexec_log(int level, int errnoval, const char *file, int line,
                 const char *func, const char *fmt, ...);
 
 void setup_logging(const char *program_name);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBQREXEC_UTILS_H */

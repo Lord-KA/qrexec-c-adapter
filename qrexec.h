@@ -22,6 +22,11 @@
 #ifndef _QREXEC_H
 #define _QREXEC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /* For information on qrexec, see:
  * - https://www.qubes-os.org/doc/qrexec/
  * - https://www.qubes-os.org/doc/qrexec-internals/
@@ -172,5 +177,9 @@ enum {
 #define QUBES_RPC_CONFIG_PATH "/etc/qubes/rpc-config"
 // support only very small configuration files,
 #define MAX_CONFIG_SIZE 4096
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _QREXEC_H */

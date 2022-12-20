@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -78,3 +82,7 @@ void qrexec_log(int level, int errnoval, const char *file, int line,
 void setup_logging(const char *program_name) {
     qrexec_program_name = program_name;
 }
+
+#ifdef __cplusplus
+}
+#endif

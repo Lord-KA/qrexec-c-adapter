@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define _POSIX_C_SOURCE 200809L
 #define _GNU_SOURCE 1
@@ -41,7 +44,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <fcntl.h>
-#include <libvchan.h>
+#include <vchan-xen/libvchan.h>
 
 #include "qrexec.h"
 #include "libqrexec-utils.h"
@@ -350,6 +353,10 @@ int handle_data_client(
     libvchan_close(data_vchan);
     return exit_code;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 /* Local Variables: */
 /* mode: c */

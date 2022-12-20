@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -309,7 +313,7 @@ struct qrexec_parsed_command *parse_qubes_rpc_command(
 
     struct qrexec_parsed_command *cmd;
 
-    if (!(cmd = malloc(sizeof(*cmd)))) {
+    if (!(cmd = (struct qrexec_parsed_command *)malloc(sizeof(*cmd)))) {
         PERROR("malloc");
         return NULL;
     }
@@ -366,7 +370,7 @@ struct qrexec_parsed_command *parse_qubes_rpc_command(
 
         /* Parse service name ("qubes.Service") */
 
-        const char *plus = memchr(start, '+', end - start);
+        const char *plus = (const char*)memchr(start, '+', end - start);
         if (plus) {
             if (plus - start == 0) {
                 LOG(ERROR, "Service name empty");
@@ -533,3 +537,7 @@ int exec_wait_for_session(const char *source_domain) {
     return execl(service_full_path, service_name, NULL);
 }
 // vim: set sw=4 ts=4 sts=4 et:
+
+#ifdef __cplusplus
+}
+#endif

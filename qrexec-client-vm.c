@@ -18,6 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
+int IN_FD;
+int OUT_FD;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <sys/un.h>
@@ -35,13 +43,13 @@
 
 const bool qrexec_is_fork_server = false;
 
-_Noreturn void handle_vchan_error(const char *op)
+void handle_vchan_error(const char *op)
 {
     LOG(ERROR, "Error while vchan %s, exiting", op);
     exit(1);
 }
 
-_Noreturn void do_exec(const char *cmd __attribute__((unused)), char const* user __attribute__((__unused__))) {
+void do_exec(const char *cmd __attribute__((unused)), char const* user __attribute__((__unused__))) {
     LOG(ERROR, "BUG: do_exec function shouldn't be called!");
     abort();
 }
@@ -68,24 +76,14 @@ static int connect_unix_socket(const char *path)
     return s;
 }
 
-static char *get_program_name(char *prog)
-{
-    char *basename = rindex(prog, '/');
-    if (basename)
-        return basename + 1;
-    else
-        return prog;
-}
-
 /* Target specification with keyword have changed from $... to @... . Convert
  * the argument appropriately, to avoid breaking user tools.
  */
 static void convert_target_name_keyword(char *target)
 {
-    size_t i;
     size_t len = strlen(target);
 
-    for (i = 0; i < len; i++)
+    for (size_t i = 0; i < len; i++)
         if (target[i] == '$')
             target[i] = '@';
 }
@@ -95,10 +93,7 @@ enum {
     opt_no_filter_stderr = 'T'+128,
 };
 
-char target_vmname[] = "RPCTest";
-char service_name[] = "test.Add";
-
-int main()
+int exec_connector(const char *target_vmname, const char *service_name)
 {
     int trigger_fd;
     struct msg_header hdr;
@@ -128,10 +123,10 @@ int main()
 
     memset(&params, 0, sizeof(params));
 
-    convert_target_name_keyword(target_vmname);
-    fprintf(stderr, "target_vmname: %s\n", target_vmname);
     strncpy(params.target_domain, target_vmname,
             sizeof(params.target_domain) - 1);
+    convert_target_name_keyword(params.target_domain);
+    fprintf(stderr, "target_vm name: %s\n", params.target_domain);
 
     snprintf(params.request_id.ident,
             sizeof(params.request_id.ident), "SOCKET");
@@ -148,7 +143,6 @@ int main()
         PERROR("write(command) to agent");
         exit(1);
     }
-    //FIXME HERE
     ret = read(trigger_fd, &exec_params, sizeof(exec_params));
     if (ret == 0) {
         fprintf(stderr, "Request refused\n");
@@ -166,25 +160,29 @@ int main()
     }
     prepare_child_env();
 
+    IN_FD  = inpipe[0];
+    OUT_FD = outpipe[1];
+
+    switch (child_pid = fork()) {
+        case -1:
+            PERROR("fork");
+            exit(-1);
+        case 0:
+            close(trigger_fd);
+
+    	    ret = handle_data_client(MSG_SERVICE_CONNECT,
+            	exec_params.connect_domain, exec_params.connect_port,
+            	inpipe[1], outpipe[0], -1, buffer_size, child_pid);
+
+	    exit(0);
+	    return 0;
+    }
     close(inpipe[1]);
     close(outpipe[0]);
     close(trigger_fd);
-
-    dup2(inpipe[0], 0);
-    dup2(outpipe[1], 1);
-    close(inpipe[0]);
-    close(outpipe[1]);
-
-    int in  = inpipe[1];
-    int out = outpipe[0];
-
-    close(inpipe[0]);
-    close(outpipe[1]);
-
-    ret = handle_data_client(MSG_SERVICE_CONNECT,
-            exec_params.connect_domain, exec_params.connect_port,
-            inpipe[1], outpipe[0], -1, buffer_size, child_pid);
-
-    close(trigger_fd);
-    return (int)ret;
+    return 0;
 }
+
+#ifdef __cplusplus
+}
+#endif

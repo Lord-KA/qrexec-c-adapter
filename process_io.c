@@ -19,6 +19,10 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
@@ -31,7 +35,7 @@
 
 #include "libqrexec-utils.h"
 
-static _Noreturn void handle_vchan_error(const char *op)
+static void handle_vchan_error(const char *op)
 {
     LOG(ERROR, "Error while vchan %s, exiting", op);
     exit(1);
@@ -343,3 +347,8 @@ int process_io(const struct process_io_request *req) {
         return remote_status;
     return local_pid ? local_status : 0;
 }
+
+
+#ifdef __cplusplus
+}
+#endif
