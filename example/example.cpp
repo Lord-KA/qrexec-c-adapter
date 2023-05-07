@@ -7,7 +7,7 @@
 
 int main()
 {
-    exec_connector("anotherVM", "test.Add");
+    exec_connector("RPCTest", "test.Add");
     /*
      * You can replace stdin/stdout with FDs or use them
      * directly (and save on buffers).
